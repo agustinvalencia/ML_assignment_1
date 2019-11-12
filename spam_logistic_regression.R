@@ -9,10 +9,13 @@ train=data[id,]
 test=data[-id,]
 
 ## 2. Logistic regression to classify 
-fit <- glm(Spam ~ . , data = train, family = binomial(link = "logit"))
+fit <- glm(Spam ~ . , data = train, family = "binomial")
 summary(fit)
-results <- predict(fit, newdata = test, type="response")
-summary(results)
-ordered_results <- results[order(results)]
-plot(ordered_results)
-View(train)
+predictions <- predict(fit, newdata = test, type="response")
+
+# classifying it
+results <- as.integer(predictions > 0.5)
+table(test$Spam, results)
+
+
+
