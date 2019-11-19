@@ -1,0 +1,25 @@
+---
+title: "Machine Learning Assignment 1"
+author: "Agustín Valencia"
+date: "11/19/2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Assignment 1. Spam classification with nearest neighbors
+
+1. Importing the data: 
+
+```{r}
+n = dim(data)[1]
+set.seed(12345)
+id = sample(1:n, floor(n*0.5))
+train = data[id,]
+test = data[-id,]
+```
+
+2. Use logistic regression to classify the training and test data by the classification principle
+$\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5 $, otherwise $\hat{Y} = 0$
