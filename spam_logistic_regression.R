@@ -28,7 +28,7 @@ table(test$Spam, results_08)
 
 
 ## 4. Train KNN K=30
-knn_model <- train.kknn(Spam ~ . , data = train, k = 30)
+knn_model <- train.kknn(Spam ~ . , data = train, ks = 1)
 knn_fit <- predict(knn_model, test)
 results <- as.integer(knn_fit > 0.5)
 table(test$Spam, results)

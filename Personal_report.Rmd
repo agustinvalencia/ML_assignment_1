@@ -8,11 +8,12 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(openxlsx)
+library(kknn)
 ```
 
 # Assignment 1. Spam classification with nearest neighbors
 
-1. Importing the data: 
+### 1. Importing the data: 
 
 ```{r}
 data <- read.xlsx("data/spambase.xlsx")
@@ -23,8 +24,7 @@ train = data[id,]
 test = data[-id,]
 ```
 
-2. Use logistic regression to classify the training and test data by the classification principle
-$\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
+### 2. Use logistic regression to classify the training and test data by the classification principle $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
 
 
 ```{r, warning=FALSE}
@@ -48,6 +48,7 @@ get_performance <- function(targets, predictions) {
     cat("TNR = ", tnr, "%\n")
     cat("FPR = ", fpr, "%\n")
     cat("FNR = ", fnr, "%\n")
+    cat("Misclassification Rate = ", (fp+fn)/total * 100, "%\n")
 }
 
 # fit the model
@@ -64,9 +65,101 @@ pred_test <- predict(fit, newdata = test)
 pred_test_at_05  <- as.integer(pred_test > 0.5)
 targets <- test$Spam
 get_performance(targets, pred_test_at_05)
-
-
-
-
 ```
+
+
+
+
+
+### 3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
+
+```{r}
+# performance on train data
+pred_train_at_08  <- as.integer(pred_train > 0.8)
+get_performance(targets, pred_train_at_08)
+
+# performance on test data
+pred_test_at_08  <- as.integer(pred_test > 0.8)
+get_performance(targets, pred_test_at_08)
+```
+
+### 4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
+
+```{r, warning=FALSE}
+# Train KNN K=30
+knn_model <- train.kknn(Spam ~ . , data = train, ks = 30)
+
+# performance on training data
+knn_fit <- predict(knn_model, train)
+results <- as.integer(knn_fit > 0.5)
+target <- train$Spam
+get_performance(target, results)
+
+# performance on test data
+knn_fit <- predict(knn_model, test)
+results <- as.integer(knn_fit > 0.5)
+target <- test$Spam
+get_performance(target, results)
+```
+
+
+### 5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
+
+```{r, warning=FALSE}
+# Train KNN K=1
+knn_model <- train.kknn(Spam ~ . , data = train, ks = 1)
+
+# performance on training data
+knn_fit <- predict(knn_model, train)
+results <- as.integer(knn_fit > 0.5)
+target <- train$Spam
+get_performance(target, results)
+
+# performance on test data
+knn_fit <- predict(knn_model, test)
+results <- as.integer(knn_fit > 0.5)
+target <- test$Spam
+get_performance(target, results)
+```
+
+If we assign k=1 training misclassification is 0%, this means we are overfitting our model, thus the misclassification for the testing set may be bigger than other scenarios. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
