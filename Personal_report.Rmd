@@ -183,7 +183,8 @@ By the plot, although there are some outliers, it seems that the data could be a
 
 ### 2. Consider model $M_i$ in which Moisture is normally distributed and the expected Moisture is polynomial 
 
-*PUT DOWN SOME MATH BAAAAAM !!*
+$$M_{i} = \sum_{i=0}^{6}{\beta_i x^i} + \varepsilon$$
+$$\varepsilon \sim N(\mu,\sigma^2)$$
 
 ### 3. Divide the data (50/50) and fit models $M_i, i=1,\cdots, 6$. For each model, record the training and validation MSE and present a plot showing how training and validation MSE depend on $i$. Which model is best according to this plot? How do MSE values change and why? Interpret this picture in bias-variance tradeoff.
 
@@ -279,7 +280,7 @@ Thus, taking into account that one of them is the intercept, we have 63 selected
 ```{r, echo=FALSE, out.height='30%', fig.align='center'}
 covariates <- scale(adhok_data[1:(length(adhok_data)-1)])
 response <- scale(adhok_data$Fat)
-model_ridge <- glmnet(as.matrix(covariates), response, alpha = 0, family = "gaussian")
+model_ridge <- glmnet(covariates, response, alpha = 0, family = "gaussian")
 plot(model_ridge, xvar="lambda", label=T)
 ```
 
@@ -289,7 +290,7 @@ It can be seen that when using Ridge regression among the $\lambda$ increasing, 
 ### 6. Repeat step 5 but fit with LASSO instead of the Ridge regression and compare the plots from steps 5 and 6. Conclusions? 
 
 ```{r, echo=FALSE, out.height='30%', fig.align='center'}
-model_lasso <- glmnet(as.matrix(covariates), response, alpha = 1, family = "gaussian")
+model_lasso <- glmnet(covariates, response, alpha = 1, family = "gaussian")
 plot(model_lasso, xvar="lambda", label=T)
 ```
 
@@ -298,6 +299,12 @@ LASSO converges to zero much faster than Ridge regression and it also drops vari
 
 ### 7. Use cross-validation to find optimal LASSO model (make sure that case $\lambda=0$ is also considered by the procedure), report the optimal $\lambda$ and how many variables were chosen by the model and make conclusions. Present also a plot showing the dependence of the CV score and comment how the CV score changes $\lambda$
 
+```{r, echo=FALSE, out.height='30%', fig.align='center'}
+lambdas <- append(model_lasso$lambda,0)
+cv_model_lasso <- cv.glmnet(as.matrix(covariates), response, alpha=1, family="gaussian", lambda=lambdas)
+cat("The best performance was at lambda = ", cv_model_lasso$lambda.min, "\n")
+plot(cv_model_lasso)
+```
 
 
 
