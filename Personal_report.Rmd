@@ -183,7 +183,8 @@ By the plot, although there are some outliers, it seems that the data could be a
 
 ### 2. Consider model $M_i$ in which Moisture is normally distributed and the expected Moisture is polynomial 
 
-$$M_{i} = \sum_{i=0}^{6}{\beta_i x^i} + \varepsilon$$
+$$M_{i} = \sum_{j=0}^{i}{\beta_j x^j} + \varepsilon$$
+$$i = {1,\cdots, 6} $$
 $$\varepsilon \sim N(\mu,\sigma^2)$$
 
 ### 3. Divide the data (50/50) and fit models $M_i, i=1,\cdots, 6$. For each model, record the training and validation MSE and present a plot showing how training and validation MSE depend on $i$. Which model is best according to this plot? How do MSE values change and why? Interpret this picture in bias-variance tradeoff.
@@ -303,16 +304,17 @@ LASSO converges to zero much faster than Ridge regression and it also drops vari
 lambdas <- append(model_lasso$lambda,0)
 cv_model_lasso <- cv.glmnet(as.matrix(covariates), response, alpha=1, family="gaussian", lambda=lambdas)
 cat("The best performance was at lambda = ", cv_model_lasso$lambda.min, "\n")
+cv_model_lasso
 plot(cv_model_lasso)
 ```
 
 
-
+From the cross-validated model it is seen that the  $\lambda$ value for which it is obtained the minimum MSE score is at $\lambda_{min} = 0$. The model has 100 non-zero parameters. Along $\log(\lambda)$ increases MSE also increases
 
 
 ### 8. Compare the results from steps 4 and 7.
 
-
+For (4) after performing a stepAIC over the model 36 variables were dropped, getting a final model with only 63 variables (plus the intercept). Nonetheless, for (7) after cross-validating the LASSO model it has been found that the best performance regarding MSE scores is at $\lambda=0$ which implies no penalization, thus, no parameters will be dropped.
 
 
 
