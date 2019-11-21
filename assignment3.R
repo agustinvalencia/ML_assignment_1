@@ -1,20 +1,19 @@
 
 #linear regression
-mylin = function(X,Y, Xpred) {
+mylin = function(X, Y, X_test) {
   
   # data validation
   X <- as.matrix(X)
-  y <- as.matrix(y)
-  Xpred <- as.matrix(Xpred)
+  Y <- as.matrix(Y)
+  X_test <- as.matrix(X_test)
   
-  Xpred1 = cbind(1, Xpred)
-  print(Xpred1)
+  #Xpred1 = cbind(1, Xpred)
   
   # regression weights
-  beta <- solve(t(X) %*% X) %*% t(X) %*% y
-  print(beta)
+  beta <- solve(t(X) %*% X) %*% t(X) %*% Y
+  y_pred <- beta %*% X_test
   
-  Res = Xpred1 %*% beta
+  #Res = Xpred1 %*% beta
   return(Res)
 }
 
