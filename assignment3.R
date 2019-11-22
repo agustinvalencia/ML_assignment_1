@@ -7,7 +7,7 @@ mylin = function(X, Y, X_test) {
   Y <- as.matrix(Y)
   X_test <- as.matrix(X_test)
   
-  #Xpred1 = cbind(1, Xpred)
+  Xpred1 = cbind(1, X_test)
   
   # regression weights
   beta <- solve(t(X) %*% X) %*% t(X) %*% Y
