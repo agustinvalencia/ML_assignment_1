@@ -142,6 +142,47 @@ get_performance(target, results, "test knn - k = 1")
 
 If we assign k=1 training misclassification is 0%, this means we are overfitting our model, thus the misclassification for the testing set may be bigger than other scenarios. 
 
+# Assignment 2. Inference about lifetime of machines
+
+1. Import the data to R.
+```{r}
+machines <- read.xlsx("data/machines.xlsx")
+machines <- machines[,1]
+```
+
+2. Assume the probability model $p(x\mid\theta) = \theta e^{-\theta x}$ for x = Length in which observations are indepentent and identically distributed. What is the distribution type of x? Write a function that computes the log-likelihood $\log p(x\mid\theta)$ for a given data vector $x$. Plot the curve showing the dependence of log-likelihood on $\theta$ where the entire data is used for fitting. 
+What is the maximum likelihood value of $\theta$ according to the plot?
+
+```{r}
+hist(machines)
+```
+
+Given the model $p(x|\theta) = \theta e^{-\theta x}$, it can be said that it follows an exponential distribution.
+
+```{r}
+llik <- function (theta, data) {
+  #res <- log(theta) - (theta * sum(data))
+  #res <- log(theta * prod(exp(-theta * data)))
+  res <- log(prod(theta * exp(-theta * data)))
+  return(res)
+}
+
+testThetas <- seq(0, 5, by=.01)
+loglik1 <- vector(length = length(testThetas))
+
+for(i in 1:length(testThetas)) {
+  loglik1[i] <- llik(testThetas[i], machines)
+}
+
+plot(x=testThetas, y=loglik1)
+
+cat("The maximum log-likelihood is given at theta=", max())
+```
+
+
+3. Repeat step 2 but use only 6 first observations from the data, and p
+
+
 
 # Assignment 3. Feature selection by cross-validation in a linear model. 
 
