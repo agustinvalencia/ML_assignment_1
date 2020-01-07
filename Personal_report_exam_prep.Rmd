@@ -5,6 +5,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, echo=FALSE}
+knitr::opts_knit$set(root.dir = "C:/Users/valen/OneDrive/Documents/Sem01/P02/Machine_Learning/Assignments/ML_assignment_1")
 knitr::opts_chunk$set(echo = TRUE)
 library(openxlsx)
 library(kknn)
@@ -24,7 +25,7 @@ train = data[id,]
 test = data[-id,]
 ```
 
-1.2. Use logistic regression to classify the training and test data by the classification principle $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
+2. Use logistic regression to classify the training and test data by the classification principle $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.5$, otherwise $\hat{Y} = 0$ and report the confusion matrices and the misclassification rates for train and test data. Analyze the obtained results. 
 
 
 ```{r, warning=FALSE, echo=FALSE}
@@ -77,7 +78,7 @@ get_performance(targets, pred_test_at_05, "test set - trigger = 0.5")
 ```
 
 
-1.3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
+3. Use logistic regression to classify the test data by the classification principle  $\hat{Y} = 1$ if $p(Y=1 | X ) > 0.8$, otherwise $\hat{Y} = 0$ 
 
 Setting a higher trigger implies that the classifier will be more selective, then it is expected to decrease the amount of mails being labeled as spam. 
 
@@ -101,7 +102,7 @@ get_performance(targets, pred_test_at_08, "test set - trigger = 0.8")
 
 Although the misclassification rate has increased, the false positive rate, i.e., the amount of valid email being sent to the spambox, has decreased, which from a user perspective could be more valuable than a higher accuracy on true positives. 
 
-1.4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
+4. Use standard kknn() with K = 30 from package *kknn*, report the misclassification rates for the training and test data and compare the results with step 2.
 
 ```{r, warning=FALSE, echo=FALSE}
 # Train KNN K=30
@@ -121,7 +122,7 @@ get_performance(target, results, "test knn - k = 30")
 ```
 
 
-1.5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
+5. Repeat step 4 for K=1 and compare results with step 4. What effects does the decrease of K lead to and why?
 
 ```{r, warning=FALSE, echo=FALSE}
 # Train KNN K=1
@@ -141,6 +142,11 @@ get_performance(target, results, "test knn - k = 1")
 ```
 
 If we assign k=1 training misclassification is 0%, this means we are overfitting our model, thus the misclassification for the testing set may be bigger than other scenarios. 
+
+
+
+
+
 
 # Assignment 2. Inference about lifetime of machines
 
@@ -174,9 +180,13 @@ for(i in 1:length(testThetas)) {
   loglik1[i] <- llik(testThetas[i], machines)
 }
 
-plot(x=testThetas, y=loglik1)
+plot(x = testThetas, y = loglik1)
 
-cat("The maximum log-likelihood is given at theta=", max())
+optIdx <- which.max(loglik1)
+maxllik <- loglik1[optIdx]
+bestTheta <- testThetas[optIdx]
+
+cat("The maximum log-likelihood =",maxllik,"is given at theta=", bestTheta)
 ```
 
 
