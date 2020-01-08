@@ -190,7 +190,78 @@ cat("The maximum log-likelihood =",maxllik,"is given at theta=", bestTheta)
 ```
 
 
-3. Repeat step 2 but use only 6 first observations from the data, and p
+3. Repeat step 2 but use only 6 first observations from the data, and put the two log-likelihood curves (from step 2 and 3) in the same plot. What can you say about reliability of the maximum likelihood solution in each case?
+
+
+```{r}
+
+loglik2 <- vector(length = length(testThetas))
+for (i in 1:length(testThetas)) {
+    loglik2[i] <- llik(testThetas[i], machines[1:6])
+}
+
+optIdx <- which.max(loglik2)
+maxllik <- loglik2[optIdx]
+bestTheta <- testThetas[optIdx]
+
+cat("The maximum log-likelihood =", maxllik, "is given at theta=", bestTheta)
+
+ggplot() + geom_point(aes(x = testThetas, y = loglik1, color = "all data")) +
+    geom_point(aes(x = testThetas, y = loglik2, color = "6 obs")) +
+    ggtitle("Log-likelihoods comparison") + ylab("log-likelihood") +
+    xlab("theta")
+```
+
+Since the second likelihood experiment is obtained from a little amount of observations we cannot rely too much on it. It is observed that the maximum is less certain than the curve with all the data. Likelihood estimation will always depend on the amount of data we have available, the more the data the best we can estimate.
+
+4. Assume now a Bayesian model with $p(x\mid\theta)=\theta e ^{-\theta x}$ and a prior $p(\theta) = \lambda e ^ {-\lambda\theta}, \lambda=10$. Write a function computing $l(\theta) = \log(p(\mathbf{x}\mid\theta)p(\theta))$. What kind of measure is actually computed by this function? Plot the curve showing the dependence of $l(\theta)$ on $\theta$ computed using the entire data and overlay it with plot from step2. Find an optimal $\theta$ and compare your result with previous findings.
+
+
+```{r}
+logPosterior <- function(theta, data) {
+    lambda <- 10
+    prior <- lambda * exp(-lambda * theta)
+    likelihood <- prod(theta * exp(-theta * data))
+    posterior <- likelihood * prior
+    return(log(posterior))
+}
+
+loglik3 <- vector(length = length(testThetas))
+for (i in 1:length(testThetas)) {
+    loglik3[i] <- logPosterior(testThetas[i], machines)
+}
+
+ggplot() + ggtitle("Posterior and likelihood comparison") +
+    geom_point(aes(x = testThetas, y = loglik3, color = "posterior")) +
+    geom_point(aes(x = testThetas, y = loglik1, color = "likelihood")) +
+    xlab("theta") + ylab("P")
+
+optIdx <- which.max(loglik3)
+maxllik <- loglik3[optIdx]
+bestTheta <- testThetas[optIdx]
+
+cat("The maximum log-likelihood =", maxllik, "is given at theta=", bestTheta)
+```
+
+This function is retrieving the Bayesian posterior probability as given by
+
+$$P(H \mid E) = \frac{P(H) P(E \mid H)}{P(E)} = \frac{P(H) P(E \mid H)}{P(H)P(E \mid H) + P(\bar{H}) P(E \mid \bar{H})}$$
+
+![This explanation has been taken from 3Blue1Brown youtube channel](C:\Users\valen\OneDrive\Documents\Sem01\P02\Machine_Learning\Assignments\ML_assignment_1\img\Bayes_explanation.png)
+
+5. Use $\theta$ value found in step 2 and generate 50 new observations from $p(x\mid\theta)=\theta e ^{-\theta x}$ (use standard random number generators). Create the histograms of the original and the new data and make conclusions. 
+
+
+```{r, out.height='30%', fig.align='center'}
+optTheta <- 1.13
+newData <- rexp(50, optTheta)
+hist(newData)
+hist(machines)
+```
+
+It can be seen that randomly generated data with the estimated parameters for the real data looks like the real data, which is indicator of a good approximation.
+
+
 
 
 
